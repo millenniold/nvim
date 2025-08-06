@@ -14,7 +14,7 @@ vim.api.nvim_create_autocmd("CmdwinEnter", {
 })
 
 -- CREATE AN INFO SCREEN FOR MY CONFIG
-function scott()
+function scott(leaveOpen)
   -- Create a scratch buffer
   local buf = vim.api.nvim_create_buf(false, true)
 
@@ -119,29 +119,22 @@ function scott()
   -- Give focus to the popup
   vim.api.nvim_set_current_win(win)
 
-  -- Auto-close after 3 seconds
-  local timer = vim.loop.new_timer()
-  timer:start(5000, 0, vim.schedule_wrap(function()
-    if vim.api.nvim_win_is_valid(win) then
-      vim.api.nvim_win_close(win, true)
-    end
-    timer:stop()
-    timer:close()
-  end))
-  
+  -- Auto-close after 5 seconds
+  if leaveOpen then
+
+  else
+    local timer = vim.loop.new_timer()
+    timer:start(10000, 0, vim.schedule_wrap(function()
+      if vim.api.nvim_win_is_valid(win) then
+        vim.api.nvim_win_close(win, true)
+      end
+      timer:stop()
+      timer:close()
+    end))
+  end
 
 end
 
--- Launch help popup when nvim starts and ensure it has focus
-vim.api.nvim_create_autocmd("VimEnter", {
-  callback = function()
-    vim.schedule(function()
-      scott()
-    end)
-  end,
-})
-
-
 vim.api.nvim_create_user_command("Scott", function()
-  scott()
+  scott(true)
 end, {})
